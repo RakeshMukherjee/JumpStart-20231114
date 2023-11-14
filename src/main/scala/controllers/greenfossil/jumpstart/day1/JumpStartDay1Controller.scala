@@ -6,6 +6,7 @@ import com.greenfossil.thorium.{*, given}
 import com.linecorp.armeria.server.annotation.{Default, Get, Param, Post}
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object JumpStartDay1Controller:
 
@@ -34,10 +35,10 @@ object JumpStartDay1Controller:
    * 2. lastname: String, optional
    * 3. dob: java.time.LocalDate with format (dd/MM/yyyy)
    */
-  private def signupMapping: Mapping[(String, String, LocalDate)] = {
+  private def signupMapping: Mapping[(String, Option[String], LocalDate)] = {
     tuple(
       "firstname" -> nonEmptyText,
-      "lastname" -> text,
+      "lastname" -> optional(text),
       "dob" -> localDateUsing("dd/MM/yyyy")
     )
   }
@@ -54,7 +55,9 @@ object JumpStartDay1Controller:
       error =>
         BadRequest("Invalid Data"),
       (firstname, lastname, dob) => {
-        val dobFormat = signupMapping("dob").bindingValueOpt
-        Ok(s"Welcome $firstname $lastname! You were born on ${dobFormat}.")
+        val dobFormat = dob.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        lastname match
+          case None => Ok(s"Welcome $firstname! You were born on ${dobFormat}.")
+          case Some(value) => Ok(s"Welcome $firstname $value! You were born on ${dobFormat}.")
       })
   }
