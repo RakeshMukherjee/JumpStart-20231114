@@ -5,6 +5,8 @@ import com.greenfossil.data.mapping.Mapping.*
 import com.greenfossil.thorium.{*, given}
 import com.linecorp.armeria.server.annotation.{Default, Get, Param, Post}
 
+import java.time.LocalDate
+
 object JumpStartDay1Controller:
 
   /*
@@ -14,7 +16,17 @@ object JumpStartDay1Controller:
    * - "Hello stranger!" if name is empty
    */
   @Get("/greetMe")
-  def greetMe(@Param @Default("") name: String) = ???
+  def greetMe(@Param @Default("") name: String) = {
+    if name.trim.isEmpty then "Hello stranger!"
+    else {
+      val firstChar = name.charAt(0)
+      val vowels = List('a','e','i','o','u', 'A', 'E', 'I','O',  'U')
+      if vowels.contains(firstChar) then s"Hi, ${name}!"
+      else
+        s"Hey, ${name}!"
+    }
+  }
+
 
   /*
    * Implement this method to bind to the following fields:
@@ -22,7 +34,13 @@ object JumpStartDay1Controller:
    * 2. lastname: String, optional
    * 3. dob: java.time.LocalDate with format (dd/MM/yyyy)
    */
-  private def signupMapping: Mapping[?] = ???
+  private def signupMapping: Mapping[(String, String, LocalDate)] = {
+    tuple(
+      "firstname" -> nonEmptyText,
+      "lastname" -> text,
+      "dob" -> localDateUsing("dd/MM/yyyy")
+    )
+  }
 
   /*
    * Implement this method to bind the HTTP request's body to `signupMapping`.
@@ -31,4 +49,12 @@ object JumpStartDay1Controller:
    *    "Welcome {firstname} {lastname}! You were born on {dob<dd/MM/yyy>}."
    */
   @Post("/signup")
-  def signup = ???
+  def signup(using request: Request) = {
+    signupMapping.bindFromRequest().fold(
+      error =>
+        BadRequest("Invalid Data"),
+      (firstname, lastname, dob) => {
+        val dobFormat = signupMapping("dob").bindingValueOpt
+        Ok(s"Welcome $firstname $lastname! You were born on ${dobFormat}.")
+      })
+  }

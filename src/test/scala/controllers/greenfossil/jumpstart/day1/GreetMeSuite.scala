@@ -10,7 +10,7 @@ class GreetMeSuite extends FunSuite:
   /*
    * HINT: Use the `addService` method
    */
-  val server: Server = Server(8080)
+  val server: Server = Server(8080).addServices(JumpStartDay1Controller)
 
   val webClient: WebClient = WebClient.of("http://localhost:8080")
 
