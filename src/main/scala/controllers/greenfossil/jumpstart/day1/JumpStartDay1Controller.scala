@@ -3,7 +3,7 @@ package controllers.greenfossil.jumpstart.day1
 import com.greenfossil.data.mapping.Mapping
 import com.greenfossil.data.mapping.Mapping.*
 import com.greenfossil.thorium.{*, given}
-import com.linecorp.armeria.server.annotation.{Get, Param, Post}
+import com.linecorp.armeria.server.annotation.{Default, Get, Param, Post}
 
 object JumpStartDay1Controller:
 
@@ -14,7 +14,7 @@ object JumpStartDay1Controller:
    * - "Hello stranger!" if name is empty
    */
   @Get("/greetMe")
-  def greetMe(@Param name: String) = ???
+  def greetMe(@Param @Default("") name: String) = ???
 
   /*
    * Implement this method to bind to the following fields:

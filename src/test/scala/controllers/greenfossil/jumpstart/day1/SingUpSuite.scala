@@ -19,7 +19,7 @@ class SingUpSuite extends FunSuite:
       "firstname=Homer&lastname=Simpson&dob=01/05/1990")
     val response = webClient.execute(httpRequest).aggregate().get()
     assertEquals(response.status(), HttpStatus.OK)
-    assertNoDiff(response.contentUtf8(), "Welcome Homer Simpson! You were born on 01/05/2023.")
+    assertNoDiff(response.contentUtf8(), "Welcome Homer Simpson! You were born on 01/05/1990.")
 
   test("Post to /signup with invalid date"):
     val httpRequest = HttpRequest.of(HttpMethod.POST, "/signup", MediaType.FORM_DATA,
@@ -40,7 +40,7 @@ class SingUpSuite extends FunSuite:
       "firstname=Homer&dob=01/05/1990")
     val response = webClient.execute(httpRequest).aggregate().get()
     assertEquals(response.status(), HttpStatus.OK)
-    assertNoDiff(response.contentUtf8(), "Welcome Homer! You were born on 01/05/2023.")
+    assertNoDiff(response.contentUtf8(), "Welcome Homer! You were born on 01/05/1990.")
 
   override def beforeAll(): Unit = server.start()
 
